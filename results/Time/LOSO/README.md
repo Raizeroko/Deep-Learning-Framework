@@ -1,3 +1,3 @@
-# Readme
+# README
 
-端到端的Leave-One-Subject-Out验证结果保存位置验证结果保存位置
+The results of End-to-End using Leave-One-Subject-Out validation.

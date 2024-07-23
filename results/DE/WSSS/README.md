@@ -1,3 +1,3 @@
-# Readme
+# README
 
-DE特征的Within-Subject-Single-Session验证结果保存位置
+The results of DE features using Within-Subject-Single-Session validation.

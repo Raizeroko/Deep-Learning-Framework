@@ -1,3 +1,3 @@
-# Readme
+# README
 
-DE特征的Leave-One-Subject-Out验证结果保存位置
+The results of DE features using Leave-One-Subject-Out validation.

@@ -1,3 +1,3 @@
-# Readme
+# README
 
-DE特征的Within-Subject验证结果保存位置验证结果保存位置
+The results of DE features using Within-Subject validation.

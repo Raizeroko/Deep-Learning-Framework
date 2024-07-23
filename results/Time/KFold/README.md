@@ -1,3 +1,3 @@
-# Readme
+# README
 
-端到端的K折验证结果保存位置
+The results of End-to-End using K-Fold validation.

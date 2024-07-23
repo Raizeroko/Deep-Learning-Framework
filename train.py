@@ -270,23 +270,29 @@ def save_results(results):
 
 
 # 代码运行开始-设置参数
-params = {'in_channels': 384,
-          'num_electrodes': 32,
-          'num_layers': 4,
-          'hid_channels': 32,
-          'num_heads': 6,
-          'num_classes': 3,
+params = {'emb_dim': 48,  # embedding dimension of Embedding, Self-Attention, Mamba
+          'emb_kernel': 16,  # 2D-conv embedding length of Embedding
+          'd_state': 16,  # d_state of Mamba2
+          'd_conv': 4,  # d_conv of Mamba2
+          'expand': 4,  # expand of Mamba2
+          'headdim': 8,  # headdim of Mamba2
+          'num_layers': 1,  # d_conv of MambaFormer
+          'num_classes': 2,  # num classes of emotion
+          'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
+          'num_electrodes': 32,  # num electordes of dataset
+          'num_heads': 8,  # num head of Self-Attention
+
           'lr': 1e-4,
           'weight_decay': 1e-4,
-          'device': torch.device("cuda:1" if torch.cuda.device_count() > 1 else ("cuda:0" if torch.cuda.is_available() else "cpu")),
-          'epoch': 300,
-          'batch_size': 20,
-          'session': 2,
-          # 'data_dir': "/home/zwr/dataset/DEAP_Preprocessed",      #Linux
-          'data_dir': "E:/datasets/DEAP_Preprocessed",              #Windows
-          'val': "KFold",   # 选择验证方式：WS/WSSS/LOSO/KFold
+          'device': torch.device("cuda:0"),
+          'epoch': 100,
+          'batch_size': 64,
+          'session': 1,
+          # 'data_dir': "/home/zwr/dataset/DEAP_Preprocessed",  # Linux
+          'data_dir': "E:/datasets/DEAP_Preprocessed",                #Windows
+          'val': "KFold",  # 选择验证方式：WS/WSSS/LOSO/KFold
           'KFold': 10,
-          'net': "ACRNN",    # 选择网络：DGCNN/py_attention/linear/EmoGT/attention/ACRNN/CGT/CMamba
+          'net': "ACRNN",  # 选择网络：ACRNN/Mamba
           'DE/Time': "Time"
           }
 

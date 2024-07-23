@@ -1,3 +1,3 @@
-# Readme
+# README
 
-DE特征的K折验证结果保存位置
+The results of DE features using K-Fold validation.
