@@ -3,7 +3,8 @@ import torch
 import torch.utils.data as Data
 import scipy.io as scio
 
-
+def SEED_Dataset_KFold(input_dir, session, target_id, k, fold):
+    return
 
 def DEAP_Dataset_WithinTrialKFold(input_dir, session, target_id, k, fold,  shuffle=True):
     global shuffle_indices
@@ -190,10 +191,13 @@ def DEAP_Dataset_KFold(input_dir, session, target_id, k, fold):
 
 if __name__ == '__main__':
     input_dir = "E:/datasets/DEAP_Preprocessed"
-    session = 1
+    subjects = 32
     k_fold = 10
-    for i in range(1,2):
-        for fold in range(10):
-            # DEAP_Dataset_WithinTrialKFold(input_dir, session, i, k_fold, fold)
-            DEAP_Dataset_KFold_Shuffle(input_dir, session, i, k_fold, fold)
-            # DEAP_Dataset_KFold(input_dir, session, i, k_fold, fold)
+
+    for session in range(1, 3):
+        for i in range(1, subjects+1):
+            for fold in range(k_fold):
+                # DEAP_Dataset_WithinTrialKFold(input_dir, session, i, k_fold, fold)
+                DEAP_Dataset_KFold_Shuffle(input_dir, session, i, k_fold, fold)
+                # DEAP_Dataset_KFold(input_dir, session, i, k_fold, fold)
+    print("success")

@@ -33,6 +33,7 @@ def train_and_validation(net, train_iter, test_iter, num_epochs, lr, weight_deca
     lossFunction = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
     net.to(device)
+    new_lr = None
 
     train_losses, val_losses, val_accs = [], [], []  # 用于存储每个 epoch 的训练损失
     for epoch in range(num_epochs):
@@ -60,6 +61,12 @@ def train_and_validation(net, train_iter, test_iter, num_epochs, lr, weight_deca
         train_losses.append(epoch_loss)
         val_losses.append(val_loss)
         val_accs.append(val_acc)
+
+        if val_acc > 0.92 and new_lr == None:
+            new_lr = lr*0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = new_lr
+            print(f'Reducing learning rate to {new_lr:.1e}')
 
 
     return train_losses, val_losses, val_accs
@@ -155,13 +162,24 @@ def train_by_WS(params):
 
 def train_by_LOSO(params):
     data_dir = params['data_dir']
+    torch.autograd.set_detect_anomaly(True)
 
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
 
-    for i in range(0, 15):
+    dataset_name = data_dir.split('/')[-1].split('_')[0]
+    if dataset_name == 'SEED' or dataset_name == 'SEEDIV':
+        subjects = 15
+    elif dataset_name == 'DEAP':
+        subjects = 32
+
+    for i in range(1, subjects+1):
         net = choose_net(params)
 
-        train_dataset, test_dataset = SEED_Dataset_LOSOCV(data_dir, params['session'], i)
+        if dataset_name == 'SEED':
+            train_dataset, test_dataset = SEED_Dataset_LOSOCV(data_dir, params['session'], i)
+        elif dataset_name == 'DEAP':
+            train_dataset, test_dataset = DEAP_Dataset_LOSOCV(data_dir, params['session'], i)
+
 
         loader_train = Data.DataLoader(
             dataset=train_dataset,
@@ -282,7 +300,7 @@ params = {'emb_dim': 48,  # embedding dimension of Embedding, Self-Attention, Ma
           'num_electrodes': 32,  # num electordes of dataset
           'num_heads': 8,  # num head of Self-Attention
 
-          'lr': 1e-4,
+          'lr': 1e-3,
           'weight_decay': 1e-4,
           'device': torch.device("cuda:0"),
           'epoch': 100,
