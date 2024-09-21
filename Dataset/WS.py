@@ -223,7 +223,7 @@ def apply_sliding_window(features, label, window_size):
 
 
 if __name__ == '__main__':
-    input_dir = "/home/zwr/dataset/SEED_Preprocessed"
+    input_dir = "E:/datasets/SEED_Preprocessed"
     session = 1
     k_fold = 10
     for i in range(1, 2):

@@ -6,8 +6,8 @@ import scipy.io as scio
 
 def preprocess_SEED_DE(session):
     # 调试
-    path = f'E:\\datasets\\SEED_PR_PL\\feature_for_net_session{session}_LDS_de'
-    label_info_ = 'E:\\datasets\\SEED\\ExtractedFeatures\\label.mat'
+    path = f'E:/datasets/SEED_Mamba/feature_for_net_session{session}_LDS_de'
+    label_info_ = 'E:/datasets/SEED_Mamba/label_PR_PL.mat'
 
     # os.chdir: 改变工作目录
     os.chdir(path)
@@ -73,7 +73,7 @@ def preprocess_SEEDIV_DE(session):
         file_name = f"subject{subject_number}.mat"
         # 保存数据为.mat文件
         file_path = os.path.join(f'E:\\datasets\\SEEDIV_Preprocessed\\Session{session}\\', file_name)
-        scio.savemat(file_path, save_data)
+        # scio.savemat(file_path, save_data)
 
 if __name__ == '__main__':
     for session in range(1, 4):

@@ -56,8 +56,10 @@ def SEED_Dataset_LOSOCV(input_dir, session, target_id):
     return train_dataset, test_dataset
 
 
-def DEAP_Dataset_LOSOCV(input_dir, session, target_id):
 
+
+
+def DEAP_Dataset_LOSOCV(input_dir, session, target_id):
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
     elif session == 2:
@@ -95,7 +97,7 @@ def DEAP_Dataset_LOSOCV(input_dir, session, target_id):
     del label_list[target_id-1]
     source_feature, source_label = torch.stack(feature_list), torch.stack(label_list)
     # 构建目标域数据集和源域数据集并返回
-    source_feature = source_feature.reshape(-1, 32, 384)
+    source_feature = source_feature.reshape(-1, source_feature.shape[2], source_feature.shape[3])
     source_label = source_label.reshape(-1)
 
     source_set = {'feature': source_feature.float(), 'label': source_label}
@@ -112,7 +114,8 @@ def DEAP_Dataset_LOSOCV(input_dir, session, target_id):
 
 if __name__ == '__main__':
     # input_dir = "/home/zwr/dataset/DEAP_Preprocessed"         #linux
-    input_dir = "E:/datasets/DEAP_Preprocessed"                 #windows
+    # input_dir = "E:/datasets/DEAP_Preprocessed"                 #windows
+    input_dir = "E:/datasets/DEAP_DE_Preprocessed"
 
     subjects = 32
     for session in range(1, 3):

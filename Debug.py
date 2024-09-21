@@ -109,10 +109,14 @@ def test_plot():
     results = scio.loadmat(path)
     print(results)
 
+def load_deap():
+    return
+
 
 if __name__ == '__main__':
+    load_deap()
     # test_kfold()
-    test_plot()
+    # test_plot()
     # test_cwc()
     # test_mamba()
     # test_gpu()
