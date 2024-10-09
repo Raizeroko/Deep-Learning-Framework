@@ -3,10 +3,10 @@ import torch
 import torch.utils.data as Data
 import scipy.io as scio
 
-def SEED_Dataset_KFold(input_dir, session, target_id, k, fold):
+def SEED_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=True):
     return
 
-def DEAP_Dataset_WithinTrialKFold(input_dir, session, target_id, k, fold,  shuffle=True):
+def DEAP_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=True):
     global shuffle_indices
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
@@ -69,7 +69,7 @@ def DEAP_Dataset_WithinTrialKFold(input_dir, session, target_id, k, fold,  shuff
 shuffle_indices = None
 
 
-def DEAP_Dataset_KFold_Shuffle(input_dir, session, target_id, k, fold,  shuffle=True):
+def DEAP_Dataset_KFold_Trial(input_dir, session, target_id, k, fold,  shuffle=True):
     global shuffle_indices
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
@@ -134,7 +134,7 @@ def DEAP_Dataset_KFold_Shuffle(input_dir, session, target_id, k, fold,  shuffle=
 
     return train_dataset, test_dataset
 
-def DEAP_Dataset_KFold(input_dir, session, target_id, k, fold):
+def DEAP_Dataset_KFold_USTrial(input_dir, session, target_id, k, fold):
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
     elif session == 2:
@@ -190,7 +190,9 @@ def DEAP_Dataset_KFold(input_dir, session, target_id, k, fold):
 
 
 if __name__ == '__main__':
-    input_dir = "E:/datasets/DEAP_Preprocessed"
+    # input_dir = "E:/datasets/DEAP_Preprocessed"
+    # input_dir = "E:/datasets/SEED_Preprocessed"
+    input_dir = "E:/datasets/DEAP_DE_Preprocessed"
     subjects = 32
     k_fold = 10
 
@@ -198,6 +200,7 @@ if __name__ == '__main__':
         for i in range(1, subjects+1):
             for fold in range(k_fold):
                 # DEAP_Dataset_WithinTrialKFold(input_dir, session, i, k_fold, fold)
-                DEAP_Dataset_KFold_Shuffle(input_dir, session, i, k_fold, fold)
+                DEAP_Dataset_KFold_Trial(input_dir, session, i, k_fold, fold)
                 # DEAP_Dataset_KFold(input_dir, session, i, k_fold, fold)
+                # DEAP_DE_Dataset_KFold_Shuffle(input_dir, session, i, k_fold, fold)
     print("success")

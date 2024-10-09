@@ -3,6 +3,8 @@ from Dataset.WS import *
 from Dataset.LOSO import *
 from Dataset.KFold import *
 from ChooseNet import *
+from utils import *
+
 
 def evaluate_model(model, dataloader, lossFunction, device):
     model.eval()  # 将模型设为评估模式
@@ -62,22 +64,19 @@ def train_and_validation(net, train_iter, test_iter, num_epochs, lr, weight_deca
         val_losses.append(val_loss)
         val_accs.append(val_acc)
 
-        if val_acc > 0.92 and new_lr == None:
-            new_lr = lr*0.1
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = new_lr
-            print(f'Reducing learning rate to {new_lr:.1e}')
-
+        # update learning rate
+        # if val_acc > 0.92 and new_lr == None:
+        #     new_lr = lr * 0.1
+        #     for param_group in optimizer.param_groups:
+        #         param_group['lr'] = new_lr
+        #     print(f'Reducing learning rate to {new_lr:.1e}')
 
     return train_losses, val_losses, val_accs
 
 
 def train_by_WSSS(params):
-    data_dir = params['data_dir']
     net = choose_net(params)
-
-    train_dataset, test_dataset = SEED_Dataset_WSSSCV(data_dir, params['session'])
-
+    train_dataset, test_dataset = SEED_Dataset_WSSSCV(params['data_dir'], params['session'])
 
     loader_train = Data.DataLoader(
         dataset=train_dataset,
@@ -105,26 +104,20 @@ def train_by_WSSS(params):
 
 
 def train_by_WS(params):
-    data_dir = params['data_dir']
     torch.autograd.set_detect_anomaly(True)
-
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
+    subjects = params['subjects']
+    dataset = params['dataset']
 
-    dataset_name = data_dir.split('/')[-1].split('_')[0]
-    if dataset_name == 'SEED' or dataset_name == 'SEEDIV':
-        subjects = 15
-    elif dataset_name == 'DEAP':
-        subjects = 32
-
-    for i in range(1, subjects+ 1):
+    for i in range(1, subjects + 1):
 
         net = choose_net(params)
         # net = choose_CMamba(params)
-        if dataset_name == 'SEED':
+        if dataset == 'SEED':
 
-            train_dataset, test_dataset = SEED_Dataset_WS(data_dir, params['session'], i)
-        elif dataset_name == 'DEAP':
-            train_dataset, test_dataset = DEAP_Dataset_WS(data_dir, params['session'], i)
+            train_dataset, test_dataset = SEED_Dataset_WS(params['data_dir'], params['session'], i)
+        elif dataset == 'DEAP':
+            train_dataset, test_dataset = DEAP_Dataset_WS(params['data_dir'], params['session'], i)
 
         loader_train = Data.DataLoader(
             dataset=train_dataset,
@@ -161,25 +154,17 @@ def train_by_WS(params):
 
 
 def train_by_LOSO(params):
-    data_dir = params['data_dir']
     torch.autograd.set_detect_anomaly(True)
-
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
+    subjects = params['subjects']
+    dataset = params['dataset']
 
-    dataset_name = data_dir.split('/')[-1].split('_')[0]
-    if dataset_name == 'SEED' or dataset_name == 'SEEDIV':
-        subjects = 15
-    elif dataset_name == 'DEAP':
-        subjects = 32
-
-    for i in range(1, subjects+1):
+    for i in range(1, subjects + 1):
         net = choose_net(params)
-
-        if dataset_name == 'SEED':
-            train_dataset, test_dataset = SEED_Dataset_LOSOCV(data_dir, params['session'], i)
-        elif dataset_name == 'DEAP':
-            train_dataset, test_dataset = DEAP_Dataset_LOSOCV(data_dir, params['session'], i)
-
+        if dataset == 'SEED':
+            train_dataset, test_dataset = SEED_Dataset_LOSOCV(params['data_dir'], params['session'], i)
+        elif dataset == 'DEAP':
+            train_dataset, test_dataset = DEAP_Dataset_LOSOCV(params['data_dir'], params['session'], i)
 
         loader_train = Data.DataLoader(
             dataset=train_dataset,
@@ -213,27 +198,29 @@ def train_by_LOSO(params):
     results = {'train_loss': sub_train_loss, 'val_loss': sub_val_loss, 'val_acc': sub_val_acc, 'params': params_copy}
     return results
 
+
 def train_by_KFold(params):
-    data_dir = params['data_dir']
     torch.autograd.set_detect_anomaly(True)
-
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
-
-    dataset_name = data_dir.split('/')[-1].split('_')[0]
-    if dataset_name == 'SEED' or dataset_name == 'SEEDIV':
-        subjects = 15
-    elif dataset_name == 'DEAP':
-        subjects = 32
-
+    subjects = params['subjects']
+    dataset = params['dataset']
     for i in range(1, subjects + 1):
         fold_train_loss, fold_val_loss, fold_val_acc = [], [], []
         for fold in range(params['KFold']):
             net = choose_net(params)
             # net = choose_CMamba(params)
-            if dataset_name == 'SEED':
-                train_dataset, test_dataset = SEED_Dataset_KFold(data_dir, params['session'], i, params['KFold'], fold)
-            elif dataset_name == 'DEAP':
-                train_dataset, test_dataset = DEAP_Dataset_KFold(data_dir, params['session'], i, params['KFold'], fold)
+            if dataset == 'SEED':
+                train_dataset, test_dataset = SEED_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
+                                                                        params['KFold'], fold)
+            elif dataset == 'DEAP':
+                if params['shuffle'] == 'Sample':
+                    train_dataset, test_dataset = DEAP_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
+                                                                            params['KFold'], fold)
+                elif params['shuffle'] == 'Trial':
+                    train_dataset, test_dataset = DEAP_Dataset_KFold_Trial(params['data_dir'], params['session'], i,
+                                                                           params['KFold'], fold)
+                    # train_dataset, test_dataset = DEAP_Dataset_KFold_USTrial(data_dir, params['session'], i,
+                    #                                                        params['KFold'], fold)
 
             loader_train = Data.DataLoader(
                 dataset=train_dataset,
@@ -273,7 +260,6 @@ def train_by_KFold(params):
     return results
 
 
-
 def save_results(results):
     # 设置文件名的初始后缀数字
     suffix_number = 1
@@ -288,35 +274,36 @@ def save_results(results):
 
 
 # 代码运行开始-设置参数
-params = {'emb_dim': 48,  # embedding dimension of Embedding, Self-Attention, Mamba
-          'emb_kernel': 16,  # 2D-conv embedding length of Embedding
-          'd_state': 16,  # d_state of Mamba2
-          'd_conv': 4,  # d_conv of Mamba2
-          'expand': 4,  # expand of Mamba2
-          'headdim': 8,  # headdim of Mamba2
-          'num_layers': 1,  # d_conv of MambaFormer
-          'num_classes': 2,  # num classes of emotion
-          'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
-          'num_electrodes': 32,  # num electordes of dataset
-          'num_heads': 8,  # num head of Self-Attention
-
-          'lr': 1e-3,
-          'weight_decay': 1e-4,
-          'device': torch.device("cuda:0"),
-          'epoch': 100,
-          'batch_size': 64,
-          'session': 1,
-          # 'data_dir': "/home/zwr/dataset/DEAP_Preprocessed",  # Linux
-          'data_dir': "E:/datasets/DEAP_Preprocessed",                #Windows
-          'val': "KFold",  # 选择验证方式：WS/WSSS/LOSO/KFold
-          'KFold': 10,
-          'net': "ACRNN",  # 选择网络：ACRNN/Mamba
-          'DE/Time': "Time"
-          }
-
+params = {
+    # -----------网络参数-------------------------------------------------------
+    'emb_dim': 48,  # embedding dimension of Embedding, Self-Attention, Mamba
+    'emb_kernel': 16,  # 2D-conv embedding length of Embedding
+    'd_state': 16,  # d_state of Mamba2
+    'd_conv': 4,  # d_conv of Mamba2
+    'expand': 4,  # expand of Mamba2
+    'headdim': 8,  # headdim of Mamba2
+    'num_layers': 1,  # d_conv of MambaFormer
+    'num_heads': 8,  # num head of Self-Attention
+    'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
+    'lr': 1e-3,  # learning rate
+    'weight_decay': 1e-4,  # L2-norm weight decay
+    # -----------训练参数-------------------------------------------------------
+    'epoch': 100,  # training epoch
+    'batch_size': 64,  # training batch size
+    'session': 1,  # dataset session: 1/2/3 (SEED:session1/2/3,SEEDIV:session1/2/3, DEAP:Arousal/Valence/Dominance)
+    'val': "KFold",  # experiment validation：WS/WSSS/LOSO/KFold
+    'shuffle': 'Sample',  # validation shuffle way: Sample/Trial
+    'KFold': 10,  # if 'val'=='KFold': K numbers
+    'net': "ACRNN",  # Choose net：ACRNN/Mamba
+    'dataset': 'DEAP',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV
+    'feature': "Time",  # input feature: Time/DE
+    'device': torch.device("cuda:0")  # training device
+}
 
 if __name__ == '__main__':
     # within_subject_single_subject
+    setup_seed(20)
+    params = init_params(params)
     if params['val'] == "WS":
         results = train_by_WS(params)
         save_results(results)
@@ -331,5 +318,3 @@ if __name__ == '__main__':
     elif params['val'] == "KFold":
         results = train_by_KFold(params)
         save_results(results)
-
-

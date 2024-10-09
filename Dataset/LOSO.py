@@ -114,8 +114,8 @@ def DEAP_Dataset_LOSOCV(input_dir, session, target_id):
 
 if __name__ == '__main__':
     # input_dir = "/home/zwr/dataset/DEAP_Preprocessed"         #linux
-    # input_dir = "E:/datasets/DEAP_Preprocessed"                 #windows
-    input_dir = "E:/datasets/DEAP_DE_Preprocessed"
+    input_dir = "E:/datasets/DEAP_Preprocessed"                 #windows
+    # input_dir = "E:/datasets/DEAP_DE_Preprocessed"
 
     subjects = 32
     for session in range(1, 3):

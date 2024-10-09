@@ -113,11 +113,11 @@ def decompose(file):
     start_index = 384  # 3s pre-trial signals
     data = read_file(file)
     frequency = 128
-    segment_length = 4 * frequency  # 512
+    segment_length = 3 * frequency  # 384
 
     all_trials_features = []
     for trial in range(40):
-        trial_features = np.zeros((32, 15, 5))
+        trial_features = np.zeros((32, 20, 5))
         trial_signal = data[trial, :, 3 * 128:]
         for channel in range(32):
             delta = butter_bandpass_filter(trial_signal[channel, :], 1, 4, frequency, order=3)
@@ -132,7 +132,7 @@ def decompose(file):
             DE_beta = []
             DE_gamma = []
 
-            for index in range(15):
+            for index in range(20):
                 start = index * segment_length
                 end = (index + 1) * segment_length
 
@@ -162,17 +162,17 @@ def decompose(file):
         # all_trials_features[f'trial{trial + 1}'] = trial_features
         all_trials_features.append(trial_features)
 
-    all_trials_features = np.array(all_trials_features)#40, 32, 15, 5)
+    all_trials_features = np.array(all_trials_features)#(40, 32, 20, 5)
     print("all_trials_features ", all_trials_features.shape)
-    all_trials_features = np.swapaxes(all_trials_features, 0, 1)#all_trials_features  (32, 40, 15, 5)
+    all_trials_features = np.swapaxes(all_trials_features, 0, 1)#all_trials_features  (32, 40, 20, 5)
     print("all_trials_features ",all_trials_features.shape)
     # 首先，将第 2 和第 3 维度展开为一维
-    flat_features = all_trials_features.reshape(all_trials_features.shape[0], -1, all_trials_features.shape[-1])
-    print("flat_features",flat_features.shape)#(32, 600, 5)
+    # flat_features = all_trials_features.reshape(all_trials_features.shape[0], -1, all_trials_features.shape[-1])
+    # print("flat_features",flat_features.shape)#(32, 600, 5)
     # Perform LDS smoothing on the features
     #smoothed_features = lds(flat_features)
 
-    return flat_features
+    return all_trials_features
 
 def save_features(file, original_features, smoothed_features):
     sio.savemat(file, {
@@ -207,7 +207,7 @@ def get_labels(file):
     for i in range(len(valence_labels)):
         trial_valence_labels = np.empty([0])
         trial_arousal_labels = np.empty([0])
-        for j in range(0, 15):
+        for j in range(0, 20):
             trial_valence_labels = np.append(trial_valence_labels,valence_labels[i])
             trial_arousal_labels = np.append(trial_arousal_labels,arousal_labels[i])
         final_arousal_labels[f'trial{i+1}'] = trial_valence_labels
@@ -237,15 +237,17 @@ if __name__ == '__main__':
         subject_number = file[1:3]  # 取出 '01'
         subject_number = int(subject_number)
         print(f"Processing: {file_path} ...")
-        flat_features= decompose(file_path)
+        features = decompose(file_path)
 
         # Apply moving average to the features
-        window_size = 5
-        smoothed_features = apply_moving_average(flat_features, window_size)
-        print("smoothed_features", smoothed_features.shape)
-        features = smoothed_features.reshape(smoothed_features.shape[0], 40, 15, smoothed_features.shape[-1])
+        # window_size = 5
+        # smoothed_features = apply_moving_average(flat_features, window_size)
+
+        # print("smoothed_features",features.shape)
+        # features = flat_features.reshape(flat_features.shape[0], 40, 20, flat_features.shape[-1])
         # 交换前两维
         all_features = features.transpose(1, 2, 3, 0)
+        print("features", all_features.shape)
         feature = {}
         for i in range(all_features.shape[0]):
             feature[f'trial{i+1}'] = all_features[i]
@@ -255,8 +257,8 @@ if __name__ == '__main__':
         valence_data = {'feature': feature, 'label': valence_label}
         file_name = f"subject{subject_number}.mat"
         print("test")
-        arousal_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed/Arousal', file_name)
-        valence_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed/Valence', file_name)
+        arousal_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Arousal', file_name)
+        valence_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Valence', file_name)
         sio.savemat(arousal_path, arousal_data)
         sio.savemat(valence_path, valence_data)
 
