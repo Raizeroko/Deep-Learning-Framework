@@ -114,7 +114,6 @@ def train_by_WS(params):
         net = choose_net(params)
         # net = choose_CMamba(params)
         if dataset == 'SEED':
-
             train_dataset, test_dataset = SEED_Dataset_WS(params['data_dir'], params['session'], i)
         elif dataset == 'DEAP':
             train_dataset, test_dataset = DEAP_Dataset_WS(params['data_dir'], params['session'], i)
@@ -260,17 +259,7 @@ def train_by_KFold(params):
     return results
 
 
-def save_results(results):
-    # 设置文件名的初始后缀数字
-    suffix_number = 1
-    # 构建文件名
-    file_name = f"./results/{params['DE/Time']}/{params['val']}/{params['net']}-{params['session']}-{suffix_number}.mat"
-    # 检查文件是否存在，如果存在，则增加后缀数字
-    while os.path.exists(file_name):
-        suffix_number += 1
-        file_name = f"./results/{params['DE/Time']}/{params['val']}/{params['net']}-{params['session']}-{suffix_number}.mat"
-    # 执行保存操作
-    scio.savemat(file_name, results)
+
 
 
 # 代码运行开始-设置参数
@@ -300,21 +289,21 @@ params = {
     'device': torch.device("cuda:0")  # training device
 }
 
+# 定义一个训练函数映射，根据 params['val'] 选择相应的训练方式
+train_funcs = {
+    "WS": train_by_WS,
+    "WSSS": train_by_WSSS,
+    "LOSO": train_by_LOSO,
+    "KFold": train_by_KFold
+}
+
+
 if __name__ == '__main__':
-    # within_subject_single_subject
     setup_seed(20)
     params = init_params(params)
-    if params['val'] == "WS":
-        results = train_by_WS(params)
-        save_results(results)
-    # within_subject_within_subject
-    elif params['val'] == "WSSS":
-        results = train_by_WSSS(params)
-        save_results(results)
-    # leave_one_subject_out
-    elif params['val'] == "LOSO":
-        results = train_by_LOSO(params)
-        save_results(results)
-    elif params['val'] == "KFold":
-        results = train_by_KFold(params)
-        save_results(results)
+
+    # 根据 params['val'] 选择对应的训练函数，并执行
+    train_func = train_funcs.get(params['val'])
+    if train_func:
+        results = train_func(params)
+        save_results(params, results)

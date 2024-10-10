@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import random
 import os
-
+import scipy.io as scio
 
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -46,3 +46,15 @@ def init_params(params):
         params['data_dir'] = os.path.join(path, data)
     return params
 
+
+def save_results(params, results):
+    # 设置文件名的初始后缀数字
+    suffix_number = 1
+    # 构建文件名
+    file_name = f"./results/{params['DE/Time']}/{params['val']}/{params['net']}-{params['session']}-{suffix_number}.mat"
+    # 检查文件是否存在，如果存在，则增加后缀数字
+    while os.path.exists(file_name):
+        suffix_number += 1
+        file_name = f"./results/{params['DE/Time']}/{params['val']}/{params['net']}-{params['session']}-{suffix_number}.mat"
+    # 执行保存操作
+    scio.savemat(file_name, results)
