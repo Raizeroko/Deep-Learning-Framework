@@ -16,6 +16,8 @@ def plot_acc():
     train_loss = results['train_loss']
     val_loss = results['val_loss']
     val_acc = results['val_acc']
+    params = results['params']
+
 
     # 计算所有 subject 在每个 epoch 上的平均准确率
     mean_acc_per_epoch = np.mean(val_acc, axis=0)
@@ -82,13 +84,19 @@ def plot_acc():
     plt.show()
 
 def plot_kfold_acc():
-    path = './results/Time/KFold/ACRNN-1-3.mat'
+    path = './results/Time/KFold/Mamba-1-8.mat'
     results = scio.loadmat(path)
 
     # 取出文件名
     parts = path.split('/')
     filename_with_extension = parts[-1]
     filename = filename_with_extension.split('.')[0]
+
+    # 打印所有参数
+    params = results['params'][0, 0]
+    keys = params.dtype.names
+    for key in keys:
+        print(f'{key}: {params[key][0]}')
 
     train_loss = results['train_loss']
     val_loss = results['val_loss']
@@ -119,7 +127,7 @@ def plot_kfold_acc():
     # 绘制所有 subject 在每个 epoch 上的平均准确率曲线，并加粗
     plt.plot(epochs, mean_acc_per_epoch, label='Mean', color='black', linewidth=2.5)
 
-    plt.title(f'Validation Accuracy for Each Subject and Mean({filename})')
+    plt.title(f'Validation Accuracy({filename})')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
@@ -144,7 +152,7 @@ def plot_kfold_acc():
     plt.axhline(mean_max_acc - std_max_acc, color='blue', linestyle='--',
                 label=f'Mean - Std: {mean_max_acc - std_max_acc:.4f}')
 
-    plt.title(f'Max Validation Accuracy for Each Subject({filename})')
+    plt.title(f'{filename}(batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, val:{params["val"][0]})')
     plt.xlabel('Subject')
     plt.ylabel('Max Accuracy')
     plt.xticks(subjects)
@@ -167,7 +175,7 @@ def plot_kfold_acc():
     plt.axhline(mean_max_acc - std_max_acc, color='blue', linestyle='--',
                 label=f'Mean - Std: {mean_max_acc - std_max_acc:.4f}')
 
-    plt.title(f'Max Validation Accuracy for Each Subject({filename})')
+    plt.title(f'{filename}(batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, val:{params["val"][0]})')
     plt.xlabel('Subject')
     plt.ylabel('Max Accuracy')
     plt.xticks(subjects)
@@ -205,6 +213,7 @@ def plot_mean_loss():
     plt.show()
 
 if __name__ == '__main__':
-    plot_acc()
+    # plot_acc()
+    plot_kfold_acc()
 
 

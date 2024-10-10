@@ -277,7 +277,7 @@ params = {
     'lr': 1e-3,  # learning rate
     'weight_decay': 1e-4,  # L2-norm weight decay
     # -----------训练参数-------------------------------------------------------
-    'seed': 20,
+    'seed': 20,  # set random seed
     'epoch': 100,  # training epoch
     'batch_size': 64,  # training batch size
     'session': 1,  # dataset session: 1/2/3 (SEED:session1/2/3,SEEDIV:session1/2/3, DEAP:Arousal/Valence/Dominance)
