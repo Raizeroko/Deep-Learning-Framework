@@ -60,7 +60,8 @@ class LSTM(nn.Module):
             )
 
     def forward(self,x,hidden0=None):
-        x = x.reshape(-1,1,1080)
+        # x = x.reshape(-1,1,1080)
+        x = x.reshape(x.shape[0], 1, -1)
         q ,(hidden,cell) = self.lstm(x)
         h = hidden[1].reshape(-1,1,64)
         c = cell[1].reshape(-1,1,64)
@@ -89,7 +90,7 @@ class CNN(nn.Module):
         # dropout
         self.dropout = nn.Dropout2d(p=0.5)
     def __call__(self,x):
-        x = x.permute(0,1,3,2)
+        x = x.permute(0, 1, 3, 2)
         c = self.conv(x)
         # c1 = c.reshape(800,-1)
         cd = self.dropout(c)
@@ -164,14 +165,11 @@ class ACRNN(nn.Module):
         x_sm = self.softmax(x_sa)
         return x_sm
 
-def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 if __name__ == '__main__':
-    x = torch.randn(20, 32, 384)
-    model = ACRNN(32)
-    num_params = count_parameters(model)
-    print("模型参数量:", num_params)
-    out = model(x)
-    print(out.shape)
+    from torchinfo import summary
+
+    net = ACRNN(32).cuda()
+    print(net.parameters())
+    summary(net, (20, 32, 384), depth=4)

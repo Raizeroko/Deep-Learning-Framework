@@ -211,13 +211,13 @@ def train_by_KFold(params):
             if dataset == 'SEED':
                 train_dataset, test_dataset = SEED_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
                                                                         params['KFold'], fold)
-            elif dataset == 'DEAP':
+            elif dataset == 'DEAP' or 'DREAMER':
                 if params['shuffle'] == 'Sample':
                     train_dataset, test_dataset = DEAP_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
-                                                                            params['KFold'], fold)
+                                                                            params['KFold'], params['trial'], fold)
                 elif params['shuffle'] == 'Trial':
                     train_dataset, test_dataset = DEAP_Dataset_KFold_Trial(params['data_dir'], params['session'], i,
-                                                                           params['KFold'], fold)
+                                                                           params['KFold'], params['trial'], fold)
                     # train_dataset, test_dataset = DEAP_Dataset_KFold_USTrial(data_dir, params['session'], i,
                     #                                                        params['KFold'], fold)
 
@@ -277,6 +277,7 @@ params = {
     'lr': 1e-3,  # learning rate
     'weight_decay': 1e-4,  # L2-norm weight decay
     # -----------训练参数-------------------------------------------------------
+    'seed': 20,
     'epoch': 100,  # training epoch
     'batch_size': 64,  # training batch size
     'session': 1,  # dataset session: 1/2/3 (SEED:session1/2/3,SEEDIV:session1/2/3, DEAP:Arousal/Valence/Dominance)
@@ -299,7 +300,7 @@ train_funcs = {
 
 
 if __name__ == '__main__':
-    setup_seed(20)
+    setup_seed(params['seed'])
     params = init_params(params)
 
     # 根据 params['val'] 选择对应的训练函数，并执行

@@ -5,15 +5,11 @@ import time
 import scipy.io as scio
 
 
-def debug():
+def preprocessed_DREAMER():
     data = sio.loadmat('E:/datasets/DREAMER/DREAMER.mat')
-    test = sio.loadmat('E:/datasets/DEAP_Preprocessed/Arousal/subject1.mat')
-
     data = data['DREAMER']
-    test = test['feature']
     # 取出所有被试数据
     data = data['Data'][0][0][0]
-    test = test['trial1'][0][0]
     # 23个被试
     for sub in range(23):
         sub_data = data[sub]
@@ -61,13 +57,13 @@ def debug():
         arousal_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Arousal/', file_name)
         valence_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Valence/', file_name)
         dominance_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Dominance/', file_name)
-        scio.savemat(arousal_path, save_data_arousal)
-        scio.savemat(valence_path, save_data_valence)
-        scio.savemat(dominance_path, save_data_dominance)
+        # scio.savemat(arousal_path, save_data_arousal)
+        # scio.savemat(valence_path, save_data_valence)
+        # scio.savemat(dominance_path, save_data_dominance)
 
     print(data)
 
 
 
 if __name__ == '__main__':
-    debug()
+    preprocessed_DREAMER()

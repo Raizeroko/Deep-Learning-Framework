@@ -3,10 +3,10 @@ import torch
 import torch.utils.data as Data
 import scipy.io as scio
 
-def SEED_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=True):
+def SEED_Dataset_KFold_Sample(input_dir, session, target_id, k, trial, fold,  shuffle=True):
     return
 
-def DEAP_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=True):
+def DEAP_Dataset_KFold_Sample(input_dir, session, target_id, k, trial, fold, shuffle=True):
     global shuffle_indices
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
@@ -21,16 +21,16 @@ def DEAP_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=T
     feature = None
     label = None
 
-    for i in range(0, 40):
+    for i in range(trial):
         if feature is None:
             feature = torch.tensor(feature_trial[f'trial{i + 1}'][0][0])
-            label = torch.tensor(label_trial[f'trial{i + 1}'][0][0])
+            label = torch.tensor(label_trial[f'trial{i + 1}'][0][0]).reshape(-1)
         else:
             feature = torch.cat((feature, torch.tensor(feature_trial[f'trial{i + 1}'][0][0])), dim=0)
-            label = torch.cat((label, torch.tensor(label_trial[f'trial{i + 1}'][0][0])), dim=0)
+            label = torch.cat((label, torch.tensor(label_trial[f'trial{i + 1}'][0][0]).reshape(-1)), dim=0)
 
     feature = feature.permute(0, 2, 1).float()
-    label = label.reshape(-1).long()
+    label = label.long()
 
     if shuffle and shuffle_indices is None:
         shuffle_indices = torch.randperm(feature.size(0))
@@ -69,7 +69,7 @@ def DEAP_Dataset_KFold_Sample(input_dir, session, target_id, k, fold,  shuffle=T
 shuffle_indices = None
 
 
-def DEAP_Dataset_KFold_Trial(input_dir, session, target_id, k, fold,  shuffle=True):
+def DEAP_Dataset_KFold_Trial(input_dir, session, target_id, k, trial, fold,  shuffle=True):
     global shuffle_indices
     if session == 1:
         data_dir = os.path.join(input_dir, 'Arousal')
@@ -84,7 +84,7 @@ def DEAP_Dataset_KFold_Trial(input_dir, session, target_id, k, fold,  shuffle=Tr
     feature = None
     label = None
 
-    for i in range(0, 40):
+    for i in range(trial):
         if feature is None:
             feature = torch.tensor(feature_trial[f'trial{i + 1}'][0][0]).unsqueeze(0)
             label = torch.tensor(label_trial[f'trial{i + 1}'][0][0]).unsqueeze(0)
@@ -192,7 +192,8 @@ def DEAP_Dataset_KFold_USTrial(input_dir, session, target_id, k, fold):
 if __name__ == '__main__':
     # input_dir = "E:/datasets/DEAP_Preprocessed"
     # input_dir = "E:/datasets/SEED_Preprocessed"
-    input_dir = "E:/datasets/DEAP_DE_Preprocessed"
+    # input_dir = "E:/datasets/DEAP_DE_Preprocessed"
+    input_dir = "E:/datasets/DREAMER_Preprocessed"
     subjects = 32
     k_fold = 10
 
@@ -200,7 +201,7 @@ if __name__ == '__main__':
         for i in range(1, subjects+1):
             for fold in range(k_fold):
                 # DEAP_Dataset_WithinTrialKFold(input_dir, session, i, k_fold, fold)
-                DEAP_Dataset_KFold_Trial(input_dir, session, i, k_fold, fold)
-                # DEAP_Dataset_KFold(input_dir, session, i, k_fold, fold)
+                # DEAP_Dataset_KFold_Trial(input_dir, session, i, k_fold, fold)
+                DEAP_Dataset_KFold_Sample(input_dir, session, i, k_fold, 18, fold)
                 # DEAP_DE_Dataset_KFold_Shuffle(input_dir, session, i, k_fold, fold)
     print("success")

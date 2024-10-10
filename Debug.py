@@ -112,9 +112,15 @@ def test_plot():
 def load_deap():
     return
 
+def test_cat():
+    a = torch.randn(131, 128, 14)
+    b = torch.randn(199, 128, 14)
+    c = torch.cat((a, b), dim=0)
+    print(c.shape)
 
 if __name__ == '__main__':
-    load_deap()
+    test_cat()
+    # load_deap()
     # test_kfold()
     # test_plot()
     # test_cwc()
