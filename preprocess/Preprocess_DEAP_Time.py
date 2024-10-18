@@ -1,4 +1,4 @@
-import scipy.io as sio
+import scipy.io as scio
 import os
 import numpy as np
 import time
@@ -82,7 +82,7 @@ def segment_signal_without_transition(data, label, label_index, window_size):
 
 def apply_mixup(dataset_file, window_size, label, yes_or_not):  # initial empty label arrays
     print("Processing", dataset_file, "..........")
-    data_file_in = sio.loadmat(dataset_file)
+    data_file_in = scio.loadmat(dataset_file)
     data_in = data_file_in["data"].transpose(0, 2, 1)
     # 0 valence, 1 arousal, 2 dominance, 3 liking
     if label == "Arousal":
@@ -148,7 +148,7 @@ def preprocessed_DEAP(dataset):
         file_name = f"subject{subject_number}.mat"
 
         file_path = os.path.join(f'E:/datasets/DEAP_Preprocessed_128/{dataset}/', file_name)
-        scio.savemat(file_path, save_data)
+        # scio.savemat(file_path, save_data)
 
         end = time.time()
         print("end time:", time.localtime())

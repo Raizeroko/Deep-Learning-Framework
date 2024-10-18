@@ -1,4 +1,4 @@
-import scipy.io as sio
+import scipy.io as scio
 import os
 import numpy as np
 import time
@@ -6,7 +6,7 @@ import scipy.io as scio
 
 
 def preprocessed_DREAMER():
-    data = sio.loadmat('E:/datasets/DREAMER/DREAMER.mat')
+    data = scio.loadmat('E:/datasets/DREAMER/DREAMER.mat')
     data = data['DREAMER']
     # 取出所有被试数据
     data = data['Data'][0][0][0]

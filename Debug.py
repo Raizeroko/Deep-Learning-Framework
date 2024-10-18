@@ -115,11 +115,17 @@ def load_deap():
 def test_cat():
     a = torch.randn(131, 128, 14)
     b = torch.randn(199, 128, 14)
-    c = torch.cat((a, b), dim=0)
+    c = torch.stack([a, b], dim=0)
     print(c.shape)
 
+def test_dataset():
+    data = scio.loadmat('E:/datasets/SEED_Preprocessed/Session1/subject1.mat')
+    data = data['label'][0][0]
+    print(data)
+
 if __name__ == '__main__':
-    test_cat()
+    # test_cat()
+    test_dataset()
     # load_deap()
     # test_kfold()
     # test_plot()

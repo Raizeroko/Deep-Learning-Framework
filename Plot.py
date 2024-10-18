@@ -39,9 +39,10 @@ def plot_accuracy_bar(acc_per_subject, filename, params, subject_indices):
     plt.axhline(mean_acc - std_acc, color='blue', linestyle='--',
                 label=f'Mean - Std: {mean_acc - std_acc:.4f}')
 
-    plt.title(f'{filename} (batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, val:{params["val"][0]})')
+    plt.title(f'{filename} (batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, '
+              f'data:{params["dataset"][0]}, val:{params["val"][0]})')
     plt.xlabel('Subject')
-    plt.ylabel('Max Accuracy')
+    plt.ylabel('Accuracy')
     plt.xticks(subject_indices + 1)
     plt.legend()
     plt.grid(False)
@@ -144,7 +145,8 @@ if __name__ == '__main__':
     # path = './results/Time/KFold/Mamba-1-8.mat'
     path = './results/Time/WS/GMA-1-5.mat'
     # 选择指定被试画图
-    subjects = [3, 5, 8, 18, 27]
+    # subjects = [3, 5, 8, 18, 27]
+    subjects = None
     if "KFold" in path:
         plot_kfold_acc(path, subjects)
     else:

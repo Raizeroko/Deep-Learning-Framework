@@ -274,6 +274,7 @@ params = {
     'num_layers': 1,  # d_conv of MambaFormer
     'num_heads': 8,  # num head of Self-Attention
     'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
+    'time':384,
     'lr': 1e-3,  # learning rate
     'weight_decay': 1e-4,  # L2-norm weight decay
     # -----------训练参数-------------------------------------------------------
@@ -282,7 +283,7 @@ params = {
     'batch_size': 64,  # training batch size
     'session': 1,  # dataset session: 1/2/3 (SEED:session1/2/3,SEEDIV:session1/2/3, DEAP:Arousal/Valence/Dominance)
     'val': "KFold",  # experiment validation：WS/WSSS/LOSO/KFold
-    'shuffle': 'Sample',  # validation shuffle way: Sample/Trial
+    'shuffle': 'Trial',  # validation shuffle way: Sample/Trial
     'KFold': 10,  # if 'val'=='KFold': K numbers
     'net': "ACRNN",  # Choose net：ACRNN/Mamba
     'dataset': 'DEAP',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV

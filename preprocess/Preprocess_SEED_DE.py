@@ -7,7 +7,7 @@ import scipy.io as scio
 def preprocess_SEED_DE(session):
     # 调试
     path = f'E:/datasets/SEED_Mamba/feature_for_net_session{session}_LDS_de'
-    label_info_ = 'E:/datasets/SEED_Mamba/label_PR_PL.mat'
+    data_label = (2, 1, 0, 0, 1, 2, 0, 1, 2, 2, 1, 0, 1, 2, 0)
 
     # os.chdir: 改变工作目录
     os.chdir(path)
@@ -20,7 +20,7 @@ def preprocess_SEED_DE(session):
         subject_number = info.split('_')[0]
 
         data = scio.loadmat(info_)
-        data_label = scio.loadmat(label_info_)
+
 
         feature = {}
         label = {}
@@ -28,8 +28,8 @@ def preprocess_SEED_DE(session):
         for key, value in data.items():
             for i in range(1, 16):
                 if key == f"de_LDS{i}":
-                    feature[f"trial{i}"] = value
-                    label[f"trial{i}"] = np.repeat(data_label['label'][0][i - 1], value.shape[1])
+                    feature[f"trial{i}"] = value.transpose(1, 2, 0)
+                    label[f"trial{i}"] = np.repeat(data_label[i - 1], value.shape[1])
 
         # 构建目标域数据集和源域数据集并返回
         save_data = {'feature': feature, 'label': label}
@@ -78,4 +78,4 @@ def preprocess_SEEDIV_DE(session):
 if __name__ == '__main__':
     for session in range(1, 4):
         preprocess_SEED_DE(session)
-        preprocess_SEEDIV_DE(session)
+        # preprocess_SEEDIV_DE(session)
