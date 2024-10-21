@@ -3,7 +3,9 @@ import torch
 import torch.utils.data as Data
 import scipy.io as scio
 
-def SEED_Dataset_WSSSCV(input_dir, session):
+
+# within-subject-single-session
+def SEED_Dataset_WSSS(input_dir, session):
     data_dir = os.path.join(input_dir, f'Session{session}')
 
     # 初始化空列表，用于存储特征和标签
@@ -64,6 +66,7 @@ def SEED_Dataset_WSSSCV(input_dir, session):
 
     return train_dataset, test_dataset
 
+# within-subject-single-session
 def SEED_Dataset_WS(input_dir, session, target_id):
     data_dir = os.path.join(input_dir, f'Session{session}')
 
@@ -111,11 +114,19 @@ def SEED_Dataset_WS(input_dir, session, target_id):
 
     return train_dataset, test_dataset
 
-def DEAP_Dataset_WS(input_dir, session, target_id):
-    if session == 1:
-        data_dir = os.path.join(input_dir, 'Arousal')
-    elif session == 2:
-        data_dir = os.path.join(input_dir, 'Valence')
+def Dataset_WS(dataset, input_dir, session, trial, target_id):
+    data_dir = None
+    if dataset == 'SEED' or dataset == 'SEEDIV':
+        # SEED
+        data_dir = os.path.join(input_dir, f'Session{session}')
+    else:
+        # DEAP/DREAMER
+        if session == 1:
+            data_dir = os.path.join(input_dir, 'Arousal')
+        elif session == 2:
+            data_dir = os.path.join(input_dir, 'Valence')
+        elif session == 3:
+            data_dir = os.path.join(input_dir, 'Dominance')
 
     file_path = os.path.join(data_dir, f'subject{target_id}.mat')
     data = scio.loadmat(file_path)
@@ -127,27 +138,28 @@ def DEAP_Dataset_WS(input_dir, session, target_id):
     target_feature = None
     target_label = None
 
+    split = round(trial*0.6)
     # 提取特征和标签
-    for i in range(1, 41):
-        if i < 37:
+    for i in range(trial):
+        if i < split:
             if source_feature is None:
-                source_feature = torch.tensor(feature_trial[f'trial{i}'][0][0])
-                source_label = torch.tensor(label_trial[f'trial{i}'][0][0])
+                source_feature = torch.tensor(feature_trial[f'trial{i+1}'][0][0])
+                source_label = torch.tensor(label_trial[f'trial{i+1}'][0][0]).reshape(-1)
             else:
-                source_feature = torch.cat((source_feature, torch.tensor(feature_trial[f'trial{i}'][0][0])), dim=0)
-                source_label = torch.cat((source_label, torch.tensor(label_trial[f'trial{i}'][0][0])), dim=0)
+                source_feature = torch.cat((source_feature, torch.tensor(feature_trial[f'trial{i+1}'][0][0])), dim=0)
+                source_label = torch.cat((source_label, torch.tensor(label_trial[f'trial{i+1}'][0][0]).reshape(-1)), dim=0)
         else:
             if target_feature is None:
-                target_feature = torch.tensor(feature_trial[f'trial{i}'][0][0])
-                target_label = torch.tensor(label_trial[f'trial{i}'][0][0])
+                target_feature = torch.tensor(feature_trial[f'trial{i+1}'][0][0])
+                target_label = torch.tensor(label_trial[f'trial{i+1}'][0][0]).reshape(-1)
             else:
-                target_feature = torch.cat((target_feature, torch.tensor(feature_trial[f'trial{i}'][0][0])), dim=0)
-                target_label = torch.cat((target_label, torch.tensor(label_trial[f'trial{i}'][0][0])), dim=0)
+                target_feature = torch.cat((target_feature, torch.tensor(feature_trial[f'trial{i+1}'][0][0])), dim=0)
+                target_label = torch.cat((target_label, torch.tensor(label_trial[f'trial{i+1}'][0][0]).reshape(-1)), dim=0)
 
     source_feature = source_feature.permute(0, 2, 1).float()
     target_feature = target_feature.permute(0, 2, 1).float()
-    source_label = source_label.reshape(-1).long()
-    target_label = target_label.reshape(-1).long()
+    source_label = source_label.long()
+    target_label = target_label.long()
 
     # 构建源域和目标域数据集
     source_set = {'feature': source_feature, 'label': source_label}
@@ -223,9 +235,32 @@ def apply_sliding_window(features, label, window_size):
 
 
 if __name__ == '__main__':
-    input_dir = "E:/datasets/SEED_Preprocessed"
-    session = 1
-    k_fold = 10
-    for i in range(1, 2):
-        for fold in range(10):
-            SEED_Dataset_Window_WS(5, input_dir, session, i)
+    # input_dir = "E:/datasets/SEED_DE_Preprocessed_128"
+    # input_dir = "E:/datasets/DEAP_DE_Preprocessed_384"
+    # input_dir = "E:/datasets/DEAP_Time_Preprocessed_128"
+    # input_dir = "E:/datasets/DEAP_Preprocessed"
+    # input_dir = "E:/datasets/DREAMER_Preprocessed"
+    # input_dir = "E:/datasets/SEED_DE_Preprocessed_128"
+    input_dir = "E:/datasets/SEED_Time_Preprocessed_128"
+
+    dataset = input_dir.split('/')[-1].split('_')[0]
+    if dataset == 'SEED' or dataset == 'SEEDIV':
+        subjects = 15
+        trial = 15
+        kfold = 5
+    elif dataset == 'DEAP':
+        subjects = 32
+        trial = 40
+        kfold = 10
+    elif dataset == 'DREAMER':
+        subjects = 23
+        trial = 18
+        kfold = 6
+
+    for session in range(1, 4):
+        for i in range(1, subjects + 1):
+            train_dataset, test_dataset = Dataset_WS(dataset, input_dir, session, trial, i)
+            # train_dataset, test_dataset = Dataset_KFold_Sample(dataset, input_dir, session, i, trial, kfold, fold)
+            print(f"session: {session}, subject: {i}")
+
+    print("success")

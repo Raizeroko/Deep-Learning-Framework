@@ -76,7 +76,7 @@ def train_and_validation(net, train_iter, test_iter, num_epochs, lr, weight_deca
 
 def train_by_WSSS(params):
     net = choose_net(params)
-    train_dataset, test_dataset = SEED_Dataset_WSSSCV(params['data_dir'], params['session'])
+    train_dataset, test_dataset = SEED_Dataset_WSSS(params['data_dir'], params['session'])
 
     loader_train = Data.DataLoader(
         dataset=train_dataset,
@@ -107,16 +107,13 @@ def train_by_WS(params):
     torch.autograd.set_detect_anomaly(True)
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
     subjects = params['subjects']
-    dataset = params['dataset']
 
     for i in range(1, subjects + 1):
 
         net = choose_net(params)
         # net = choose_CMamba(params)
-        if dataset == 'SEED':
-            train_dataset, test_dataset = SEED_Dataset_WS(params['data_dir'], params['session'], i)
-        elif dataset == 'DEAP':
-            train_dataset, test_dataset = DEAP_Dataset_WS(params['data_dir'], params['session'], i)
+        train_dataset, test_dataset = Dataset_WS(params['dataset'], params['data_dir'], params['session'],
+                                                 params['trial'], i)
 
         loader_train = Data.DataLoader(
             dataset=train_dataset,
@@ -156,14 +153,12 @@ def train_by_LOSO(params):
     torch.autograd.set_detect_anomaly(True)
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
     subjects = params['subjects']
-    dataset = params['dataset']
 
     for i in range(1, subjects + 1):
         net = choose_net(params)
-        if dataset == 'SEED':
-            train_dataset, test_dataset = SEED_Dataset_LOSOCV(params['data_dir'], params['session'], i)
-        elif dataset == 'DEAP':
-            train_dataset, test_dataset = DEAP_Dataset_LOSOCV(params['data_dir'], params['session'], i)
+
+        train_dataset, test_dataset = Dataset_LOSO(params['dataset'], params['data_dir'], params['session'],
+                                                   params['subjects'], params['trial'], i)
 
         loader_train = Data.DataLoader(
             dataset=train_dataset,
@@ -202,7 +197,7 @@ def train_by_KFold(params):
     torch.autograd.set_detect_anomaly(True)
     sub_train_loss, sub_val_loss, sub_val_acc = [], [], []
     subjects = params['subjects']
-    dataset = params['dataset']
+
     for i in range(1, subjects + 1):
         fold_train_loss, fold_val_loss, fold_val_acc = [], [], []
         for fold in range(params['KFold']):
