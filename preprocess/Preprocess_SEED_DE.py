@@ -35,8 +35,8 @@ def preprocess_SEED_DE(session):
         save_data = {'feature': feature, 'label': label}
         file_name = f"subject{subject_number}.mat"
         # 保存数据为.mat文件
-        # file_path = os.path.join(f'E:\\datasets\\SEED_Preprocessed\\Session{session}\\', file_name)
-        # scio.savemat(file_path, save_data)
+        file_path = os.path.join(f'E:\\datasets\\SEED_DE_Preprocessed_128\\Session{session}\\', file_name)
+        scio.savemat(file_path, save_data)
 
 
 def preprocess_SEEDIV_DE(session):
@@ -61,7 +61,7 @@ def preprocess_SEEDIV_DE(session):
 
         feature = {}
         label = {}
-        # 15个trail处理
+        # 15个trial处理
         for key, value in data.items():
             for i in range(1, 25):
                 if key == f"de_LDS{i}":

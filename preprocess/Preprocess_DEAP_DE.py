@@ -259,7 +259,7 @@ if __name__ == '__main__':
         print("test")
         arousal_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Arousal', file_name)
         valence_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Valence', file_name)
-        scio.savemat(arousal_path, arousal_data)
-        scio.savemat(valence_path, valence_data)
+        # scio.savemat(arousal_path, arousal_data)
+        # scio.savemat(valence_path, valence_data)
 
 

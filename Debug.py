@@ -119,9 +119,26 @@ def test_cat():
     print(c.shape)
 
 def test_dataset():
-    data = scio.loadmat('E:/datasets/SEED_Preprocessed/Session1/subject1.mat')
-    data = data['label'][0][0]
-    print(data)
+    data1 = scio.loadmat('E:/datasets/SEED_Preprocessed/Session1/subject1.mat')
+    data2 = scio.loadmat('E:/datasets/DEAP_DE_Preprocessed_384/Arousal/subject1.mat')
+    data3 = scio.loadmat('E:/datasets/DEAP_DE_Preprocessed/Arousal/subject1.mat')
+    data4 = scio.loadmat('E:/datasets/DEAP_Preprocessed/Arousal/subject1.mat')
+    data5 = scio.loadmat('E:/datasets/DEAP_Preprocessed_128/Arousal/subject1.mat')
+    data6 = scio.loadmat('E:/datasets/DREAMER_Preprocessed/Arousal/subject1.mat')
+    data7 = scio.loadmat('E:/datasets/SEED_DE_Preprocessed_128/Session1/subject1.mat')
+    data8 = scio.loadmat('E:/datasets/SEED_Time_Preprocessed_128/Session1/subject1.mat')
+    data9 = scio.loadmat('E:/datasets/SEEDIV_Preprocessed/Session1/subject1.mat')
+    data1 = data1['feature'][0][0]['trial1']
+    data2 = data2['feature'][0][0]['trial1']
+    data3 = data3['feature'][0][0]['trial1']
+    data4 = data4['feature'][0][0]['trial1']
+    data5 = data5['feature'][0][0]['trial1']
+    data6 = data6['feature'][0][0]['trial1']
+    data7 = data7['feature'][0][0]['trial1']
+    data8 = data8['feature'][0][0]['trial1']
+    data9 = data9['feature'][0][0]['trial1']
+
+    print(data1)
 
 if __name__ == '__main__':
     # test_cat()

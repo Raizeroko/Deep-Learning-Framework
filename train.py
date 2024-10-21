@@ -208,18 +208,15 @@ def train_by_KFold(params):
         for fold in range(params['KFold']):
             net = choose_net(params)
             # net = choose_CMamba(params)
-            if dataset == 'SEED':
-                train_dataset, test_dataset = SEED_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
-                                                                        params['KFold'], fold)
-            elif dataset == 'DEAP' or 'DREAMER':
-                if params['shuffle'] == 'Sample':
-                    train_dataset, test_dataset = DEAP_Dataset_KFold_Sample(params['data_dir'], params['session'], i,
-                                                                            params['KFold'], params['trial'], fold)
-                elif params['shuffle'] == 'Trial':
-                    train_dataset, test_dataset = DEAP_Dataset_KFold_Trial(params['data_dir'], params['session'], i,
-                                                                           params['KFold'], params['trial'], fold)
-                    # train_dataset, test_dataset = DEAP_Dataset_KFold_USTrial(data_dir, params['session'], i,
-                    #                                                        params['KFold'], fold)
+            if params['shuffle'] == 'Sample':
+                train_dataset, test_dataset = Dataset_KFold_Sample(params['dataset'], params['data_dir'],
+                                                                   params['session'], i, params['KFold'],
+                                                                   params['trial'], fold)
+            elif params['shuffle'] == 'Trial':
+                train_dataset, test_dataset = Dataset_KFold_Trial(params['dataset'], params['data_dir'],
+                                                                  params['session'], i, params['KFold'],
+                                                                  params['trial'], fold)
+
 
             loader_train = Data.DataLoader(
                 dataset=train_dataset,
@@ -274,7 +271,7 @@ params = {
     'num_layers': 1,  # d_conv of MambaFormer
     'num_heads': 8,  # num head of Self-Attention
     'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
-    'time':384,
+    'time': 128,
     'lr': 1e-3,  # learning rate
     'weight_decay': 1e-4,  # L2-norm weight decay
     # -----------训练参数-------------------------------------------------------
@@ -284,10 +281,10 @@ params = {
     'session': 1,  # dataset session: 1/2/3 (SEED:session1/2/3,SEEDIV:session1/2/3, DEAP:Arousal/Valence/Dominance)
     'val': "KFold",  # experiment validation：WS/WSSS/LOSO/KFold
     'shuffle': 'Trial',  # validation shuffle way: Sample/Trial
-    'KFold': 10,  # if 'val'=='KFold': K numbers
+    'KFold': 5,  # if 'val'=='KFold': K numbers
     'net': "ACRNN",  # Choose net：ACRNN/Mamba
-    'dataset': 'DEAP',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV
-    'feature': "Time",  # input feature: Time/DE
+    'dataset': 'SEED',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV
+    'feature': "DE",  # input feature: Time/DE
     'device': torch.device("cuda:0")  # training device
 }
 
