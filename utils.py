@@ -20,7 +20,7 @@ def init_params(params):
     if os.name == 'posix':  # Linux or macOS
         path = '/home/zwr/dataset/'
 
-    data = f"{params['dataset']}_{params['feature']}_Preprocessed_{params['Time']}"
+    data = f"{params['dataset']}_{params['feature']}_Preprocessed_{params['time']}"
 
     if params['dataset'] == 'DEAP':
         params['num_electrodes'] = 32           #DEAP有62给电极通道
