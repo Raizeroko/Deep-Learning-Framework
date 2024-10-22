@@ -36,7 +36,7 @@ def init_params(params):
 
     elif params['dataset'] == 'SEED' or 'SEEDIV':
         params['num_electrodes'] = 62           #SEED有62给电极通道
-        params['subjects'] = 32
+        params['subjects'] = 15
         params['trial'] = 15
         if params['dataset'] == 'SEED':
             params['num_classes'] = 3           #SEED是三分类:positive, negative, neutral
