@@ -118,6 +118,7 @@ def apply_mixup(dataset_file, window_size, label, yes_or_not):  # initial empty 
         # rnn data process
         data_rnn = data.reshape(int(data.shape[0] / window_size), window_size, 32)
         # append new data and label
+        test = data_rnn[1,:,1].reshape(-1)
         feature_out[f"trial{trial+1}"] = data_rnn
         label_out[f"trial{trial+1}"] = label
 
@@ -135,9 +136,9 @@ def apply_mixup(dataset_file, window_size, label, yes_or_not):  # initial empty 
 def preprocessed_DEAP(dataset):
     begin = time.time()
     print("time begin:", time.localtime())
-    dataset_dir = "E:/datasets/DEAP/physiological recordings生理记录/data_preprocessed_matlab/"
-    window_size = 128
-    label_class = dataset  # arousal/valence
+    dataset_dir = "E:/datasets/UnPreprocessed/DEAP/physiological recordings生理记录/data_preprocessed_matlab/"
+    window_size = 384
+    label_class = dataset  # arousal/valence/dominance
     suffix = 'yes'  # yes/no (remove baseline signals or not)
     record_list = [task for task in os.listdir(dataset_dir) if os.path.isfile(os.path.join(dataset_dir, task))]
 
@@ -147,8 +148,8 @@ def preprocessed_DEAP(dataset):
         subject_number = int(record[1:3])
         file_name = f"subject{subject_number}.mat"
 
-        file_path = os.path.join(f'E:/datasets/DEAP_Preprocessed_128/{dataset}/', file_name)
-        # scio.savemat(file_path, save_data)
+        file_path = os.path.join(f'E:/datasets/DEAP_Time_Preprocessed_384/{dataset}/', file_name)
+        scio.savemat(file_path, save_data)
 
         end = time.time()
         print("end time:", time.localtime())

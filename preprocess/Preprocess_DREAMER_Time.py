@@ -6,8 +6,9 @@ import scipy.io as scio
 
 
 def preprocessed_DREAMER():
-    data = scio.loadmat('E:/datasets/DREAMER/DREAMER.mat')
+    data = scio.loadmat('E:/datasets/UnPreprocessed/DREAMER/DREAMER.mat')
     data = data['DREAMER']
+    window_size = 384
     # 取出所有被试数据
     data = data['Data'][0][0][0]
     # 23个被试
@@ -27,6 +28,9 @@ def preprocessed_DREAMER():
         dominance = {}
         for trial in range(18):
             trial_baseline = sub_baseline[trial][0]
+
+            # last 3s baseline
+            trial_baseline = trial_baseline[-384:, :]
             baseline = trial_baseline.reshape(-1, 128, 14)
             baseline = np.mean(baseline, axis=0)
             trial_stimuli = sub_stimuli[trial][0]
@@ -43,7 +47,9 @@ def preprocessed_DREAMER():
             trial_valence = 0 if trial_valence <= 3 else 1
             trial_dominance = 0 if trial_dominance <= 3 else 1
 
-            trial_feature = trial_stimuli.reshape(-1, 128, 14)
+            T = trial_stimuli.shape[0]//window_size
+            trial_stimuli = trial_stimuli[:T*window_size, :]
+            trial_feature = trial_stimuli.reshape(-1, window_size, 14)
             feature[f'trial{trial + 1}'] = trial_feature
             arousal[f'trial{trial + 1}'] = np.repeat(trial_arousal, trial_feature.shape[0])
             valence[f'trial{trial + 1}'] = np.repeat(trial_valence, trial_feature.shape[0])
@@ -54,12 +60,12 @@ def preprocessed_DREAMER():
         save_data_dominance = {'feature': feature, 'label': dominance}
 
         file_name = f"subject{sub+1}.mat"
-        arousal_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Arousal/', file_name)
-        valence_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Valence/', file_name)
-        dominance_path = os.path.join(f'E:/datasets/DREAMER_Preprocessed/Dominance/', file_name)
-        # scio.savemat(arousal_path, save_data_arousal)
-        # scio.savemat(valence_path, save_data_valence)
-        # scio.savemat(dominance_path, save_data_dominance)
+        arousal_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Arousal/', file_name)
+        valence_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Valence/', file_name)
+        dominance_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Dominance/', file_name)
+        scio.savemat(arousal_path, save_data_arousal)
+        scio.savemat(valence_path, save_data_valence)
+        scio.savemat(dominance_path, save_data_dominance)
 
     print(data)
 

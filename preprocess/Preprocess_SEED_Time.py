@@ -5,8 +5,7 @@ import time
 import mne
 
 def preprocess_SEED_Time(session):
-    path = f'E:/datasets/SEED/session{session}'
-
+    path = f'E:/datasets/UnPreprocessed/SEED/session{session}'
 
     for info in os.listdir(path):
         info_ = os.path.join(path, info)
@@ -56,15 +55,26 @@ def preprocess_SEED_Time(session):
 
             # Permute (n_windows, n_channels, window_size)
             feature_trial = feature_trial.transpose(1, 2, 0)
+            # test1 = feature_trial[1, :, 1,].reshape(-1)
+            mean = np.mean(feature_trial, axis=0, keepdims=True)  # 计算每个通道的均值
+            std = np.std(feature_trial, axis=0, keepdims=True)  # 计算每个通道的标准差
 
+            # 避免除以 0 的情况
+            std[std == 0] = 1
+
+            # 进行归一化处理
+            feature_trial_normalized = (feature_trial - mean) / std
+
+
+            # test2 = feature_trial_normalized[1, :, 1].reshape(-1)
             # 存储处理后的特征
-            feature[f"trial{i}"] = feature_trial
+            feature[f"trial{i}"] = feature_trial_normalized
 
             # 创建与窗口匹配的标签
 
-            label[f"trial{i}"] = np.repeat(label_info[i - 1], feature_trial.shape[0])
+            label[f"trial{i}"] = np.repeat(label_info[i - 1], feature_trial_normalized.shape[0])
 
-            print(f"Trial {i} feature shape: {feature_trial.shape}")
+            print(f"Trial {i} feature shape: {feature_trial_normalized.shape}")
             print(f"Trial {i} label shape: {label[f'trial{i}'].shape}")
 
         save_data = {'feature': feature, 'label': label}

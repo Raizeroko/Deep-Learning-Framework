@@ -122,9 +122,9 @@ if __name__ == '__main__':
     # input_dir = "E:/datasets/DEAP_DE_Preprocessed_384"
     # input_dir = "E:/datasets/DEAP_Time_Preprocessed_128"
     # input_dir = "E:/datasets/DEAP_Preprocessed"
-    input_dir = "E:/datasets/DREAMER_Preprocessed"
+    # input_dir = "E:/datasets/DREAMER_Preprocessed"
     # input_dir = "E:/datasets/SEED_DE_Preprocessed_128"
-    # input_dir = "E:/datasets/SEED_Time_Preprocessed_128"
+    input_dir = "E:/datasets/SEED_Time_Preprocessed_128"
 
     dataset = input_dir.split('/')[-1].split('_')[0]
     if dataset == 'SEED' or dataset == 'SEEDIV':

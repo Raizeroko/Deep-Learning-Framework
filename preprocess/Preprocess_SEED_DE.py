@@ -6,7 +6,7 @@ import scipy.io as scio
 
 def preprocess_SEED_DE(session):
     # 调试
-    path = f'E:/datasets/SEED_Mamba/feature_for_net_session{session}_LDS_de'
+    path = f'E:/datasets/UnPreprocessed/SEED_Mamba/feature_for_net_session{session}_LDS_de'
     data_label = (2, 1, 0, 0, 1, 2, 0, 1, 2, 2, 1, 0, 1, 2, 0)
 
     # os.chdir: 改变工作目录
@@ -36,7 +36,7 @@ def preprocess_SEED_DE(session):
         file_name = f"subject{subject_number}.mat"
         # 保存数据为.mat文件
         file_path = os.path.join(f'E:\\datasets\\SEED_DE_Preprocessed_128\\Session{session}\\', file_name)
-        scio.savemat(file_path, save_data)
+        # scio.savemat(file_path, save_data)
 
 
 def preprocess_SEEDIV_DE(session):

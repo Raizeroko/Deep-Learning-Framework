@@ -184,7 +184,8 @@ def save_features(file, original_features, smoothed_features):
 def get_labels(file):
     #0 valence, 1 arousal, 2 dominance, 3 liking
     valence_labels = scio.loadmat(file)["labels"][:,0]	# valence labels
-    arousal_labels = scio.loadmat(file)["labels"][:,1]# arousal labels
+    arousal_labels = scio.loadmat(file)["labels"][:,1] # arousal labels
+    dominance_labels = scio.loadmat(file)["labels"][:,2]
     print("v",valence_labels)
     print("a", arousal_labels)
     for i in range(len(valence_labels)):
@@ -197,23 +198,31 @@ def get_labels(file):
             arousal_labels[i] =1
         else :
             arousal_labels[i]=0
+        if dominance_labels[i] > 5:
+            dominance_labels[i] = 1
+        else:
+            dominance_labels[i] = 0
 
     print("v2", valence_labels)
     print("a2", arousal_labels)
     # assert 1==0
     final_valence_labels = {}
     final_arousal_labels = {}
+    final_dominance_labels = {}
     print("len(valence_labels),len(arousal_labels)",len(valence_labels),len(arousal_labels))
     for i in range(len(valence_labels)):
         trial_valence_labels = np.empty([0])
         trial_arousal_labels = np.empty([0])
+        trial_dominance_labels = np.empty([0])
         for j in range(0, 20):
             trial_valence_labels = np.append(trial_valence_labels,valence_labels[i])
             trial_arousal_labels = np.append(trial_arousal_labels,arousal_labels[i])
+            trial_dominance_labels = np.append(trial_dominance_labels,dominance_labels[i])
         final_arousal_labels[f'trial{i+1}'] = trial_valence_labels
         final_valence_labels[f'trial{i+1}'] = trial_arousal_labels
+        final_dominance_labels[f'trial{i+1}'] = trial_dominance_labels
 
-    return final_arousal_labels, final_valence_labels
+    return final_arousal_labels, final_valence_labels, final_dominance_labels
 
 def moving_average(data, window_size):
     padded_data = np.pad(data, (window_size // 2, window_size // 2), mode='edge')
@@ -228,9 +237,7 @@ def apply_moving_average(features, window_size):
 
 
 if __name__ == '__main__':
-    dataset_dir = "E:/datasets/DEAP/physiological recordings生理记录/data_preprocessed_matlab"
-    result_dir = "/home/pamL/PycharmProjects/deap_DE6/"
-    os.makedirs(result_dir, exist_ok=True)
+    dataset_dir = "E:/datasets/UnPreprocessed/DEAP/physiological recordings生理记录/data_preprocessed_matlab"
 
     for file in os.listdir(dataset_dir):
         file_path = os.path.join(dataset_dir, file)
@@ -251,15 +258,18 @@ if __name__ == '__main__':
         feature = {}
         for i in range(all_features.shape[0]):
             feature[f'trial{i+1}'] = all_features[i]
-        arousal_label, valence_label = get_labels(file_path)
+        arousal_label, valence_label,dominance_label = get_labels(file_path)
 
         arousal_data = {'feature': feature, 'label': arousal_label}
         valence_data = {'feature': feature, 'label': valence_label}
+        dominance_data = {'feature': feature, 'label':dominance_label}
         file_name = f"subject{subject_number}.mat"
         print("test")
         arousal_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Arousal', file_name)
         valence_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Valence', file_name)
+        dominance_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Dominance', file_name)
         # scio.savemat(arousal_path, arousal_data)
         # scio.savemat(valence_path, valence_data)
+        scio.savemat(dominance_path, dominance_data)
 
 

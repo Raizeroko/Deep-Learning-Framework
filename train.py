@@ -205,12 +205,12 @@ def train_by_KFold(params):
             # net = choose_CMamba(params)
             if params['shuffle'] == 'Sample':
                 train_dataset, test_dataset = Dataset_KFold_Sample(params['dataset'], params['data_dir'],
-                                                                   params['session'], i, params['KFold'],
-                                                                   params['trial'], fold)
+                                                                   params['session'], i, params['trial'],
+                                                                   params['KFold'], fold)
             elif params['shuffle'] == 'Trial':
                 train_dataset, test_dataset = Dataset_KFold_Trial(params['dataset'], params['data_dir'],
-                                                                  params['session'], i, params['KFold'],
-                                                                  params['trial'], fold)
+                                                                  params['session'], i, params['trial'],
+                                                                  params['KFold'], fold)
 
 
             loader_train = Data.DataLoader(
@@ -266,7 +266,7 @@ params = {
     'num_layers': 1,  # d_conv of MambaFormer
     'num_heads': 8,  # num head of Self-Attention
     'dropout': 0.5,  # dropout of Embedding, Self-Attention, Mamba
-    'time': 128,
+    'time': 384,
     'lr': 1e-3,  # learning rate
     'weight_decay': 1e-4,  # L2-norm weight decay
     # -----------训练参数-------------------------------------------------------

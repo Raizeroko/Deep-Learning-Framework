@@ -1,6 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io as scio
+import pandas as pd
+
+def save_excel(data):
+    # 将数据转换为 DataFrame
+    df = pd.DataFrame(data)
+    # 保存数据到 Excel 文件
+    df.to_excel('out.xlsx')
+    print(f"Max accuracy per subject been saved")
+
 
 # 提取文件名
 def extract_filename(path):
@@ -39,8 +48,8 @@ def plot_accuracy_bar(acc_per_subject, filename, params, subject_indices):
     plt.axhline(mean_acc - std_acc, color='blue', linestyle='--',
                 label=f'Mean - Std: {mean_acc - std_acc:.4f}')
 
-    plt.title(f'{filename} (batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, '
-              f'data:{params["dataset"][0]}, val:{params["val"][0]})')
+    # plt.title(f'{filename} (batch_size:{params["batch_size"][0][0]}, epoch:{params["epoch"][0][0]}, '
+    #           f'data:{params["dataset"][0]}, val:{params["val"][0]})')
     plt.xlabel('Subject')
     plt.ylabel('Accuracy')
     plt.xticks(subject_indices + 1)
@@ -65,7 +74,7 @@ def plot_loss_curve(train_loss, val_loss, filename, subject_indices):
     plt.show()
 
 # 处理并绘制普通结果
-def plot_acc(path, subjects=None):
+def plot_acc(path, subjects=None, excel=False):
     results = scio.loadmat(path)
     filename = extract_filename(path)
 
@@ -92,11 +101,14 @@ def plot_acc(path, subjects=None):
     max_acc_per_subject = np.max(val_acc, axis=1)
     plot_accuracy_bar(max_acc_per_subject, filename, params, subject_indices)
 
+    if excel:
+        save_excel(max_acc_per_subject)
+
     # 绘制损失曲线
     plot_loss_curve(train_loss, val_loss, filename, subject_indices)
 
 # 处理并绘制KFold结果
-def plot_kfold_acc(path, subjects=None):
+def plot_kfold_acc(path, subjects=None, excel=False):
     results = scio.loadmat(path)
     filename = extract_filename(path)
 
@@ -116,6 +128,10 @@ def plot_kfold_acc(path, subjects=None):
     # 找到每个 subject 的最高 fold 索引
     max_acc_per_subject = np.max(val_acc, axis=2)
     best_fold_indices = np.argmax(max_acc_per_subject, axis=1)
+
+    # 保存为excel
+    if excel:
+        save_excel(max_acc_per_subject)
 
     # 提取每个 subject 在其最佳 fold 上的准确率数据
     best_fold_acc = np.array([val_acc[i, best_fold_indices[i]] for i in range(val_acc.shape[0])])
@@ -142,13 +158,16 @@ def plot_kfold_acc(path, subjects=None):
 
 
 if __name__ == '__main__':
-    # path = './results/Time/KFold/Mamba-1-8.mat'
-    path = './results/Time/WS/GMA-1-5.mat'
+    path = './results/DE/KFold/DGCNN-3-1.mat'
+    # path = './results/Time/WS/GMA-1-5.mat'
     # 选择指定被试画图
     # subjects = [3, 5, 8, 18, 27]
+
+    # 保存为excel
+    excel = True
     subjects = None
     if "KFold" in path:
-        plot_kfold_acc(path, subjects)
+        plot_kfold_acc(path, subjects, excel)
     else:
-        plot_acc(path, subjects)
+        plot_acc(path, subjects, excel)
 
