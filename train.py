@@ -173,6 +173,7 @@ def train_by_LOSO(params):
             num_workers=0
         )
 
+        print(f'subject {i}:')
         train_losses, val_losses, val_accs = train_and_validation(net,
                                                                   loader_train,
                                                                   loader_test,
@@ -278,7 +279,7 @@ params = {
     'shuffle': 'Trial',  # validation shuffle way: Sample/Trial
     'KFold': 5,  # if 'val'=='KFold': K numbers
     'net': "ACRNN",  # Choose net：ACRNN/Mamba
-    'dataset': 'SEED',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV
+    'dataset': 'CEED',  # choose dataset: DEAP/DREAMER/SEED/SEEDIV
     'feature': "DE",  # input feature: Time/DE
     'device': torch.device("cuda:0")  # training device
 }

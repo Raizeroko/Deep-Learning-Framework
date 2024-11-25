@@ -149,7 +149,7 @@ def preprocessed_DEAP(dataset):
         file_name = f"subject{subject_number}.mat"
 
         file_path = os.path.join(f'E:/datasets/DEAP_Time_Preprocessed_384/{dataset}/', file_name)
-        scio.savemat(file_path, save_data)
+        # scio.savemat(file_path, save_data)
 
         end = time.time()
         print("end time:", time.localtime())

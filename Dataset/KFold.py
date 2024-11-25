@@ -11,7 +11,7 @@ def Dataset_KFold_Sample(dataset, input_dir, session, target_id, trial, k, fold,
     if dataset == 'SEED' or dataset == 'SEEDIV':
         # SEED/SEEDIV
         data_dir = os.path.join(input_dir, f'Session{session}')
-    else:
+    elif dataset == 'DREAMER' or dataset == 'DEAP':
         # DEAP/DREAMER
         if session == 1:
             data_dir = os.path.join(input_dir, 'Arousal')
@@ -19,7 +19,8 @@ def Dataset_KFold_Sample(dataset, input_dir, session, target_id, trial, k, fold,
             data_dir = os.path.join(input_dir, 'Valence')
         elif session == 3:
             data_dir = os.path.join(input_dir, 'Dominance')
-
+    elif dataset == 'CEED':
+        data_dir = input_dir
     if data_dir == None:
         print('Dataset Error!')
 
@@ -83,7 +84,7 @@ def Dataset_KFold_Trial(dataset, input_dir, session, target_id, trial, k, fold, 
     if dataset == 'SEED' or dataset == 'SEEDIV':
         # SEED
         data_dir = os.path.join(input_dir, f'Session{session}')
-    else:
+    elif dataset == 'DREAMER' or dataset == 'DEAP':
         # DEAP/DREAMER
         if session == 1:
             data_dir = os.path.join(input_dir, 'Arousal')
@@ -91,6 +92,8 @@ def Dataset_KFold_Trial(dataset, input_dir, session, target_id, trial, k, fold, 
             data_dir = os.path.join(input_dir, 'Valence')
         elif session == 3:
             data_dir = os.path.join(input_dir, 'Dominance')
+    elif dataset == 'CEED':
+        data_dir = input_dir
     if data_dir == None:
         print('Dataset Error!')
 
@@ -118,6 +121,9 @@ def Dataset_KFold_Trial(dataset, input_dir, session, target_id, trial, k, fold, 
         # 将数据存入字典
         trials['feature'].append(trial_feature)
         trials['label'].append(trial_label)
+
+    if trial % k != 0:
+        raise ValueError(f"Trial {trial} is not divisible by {k}")
 
     # 计算每个 fold 的大小
     fold_size = len(trials['feature']) // k

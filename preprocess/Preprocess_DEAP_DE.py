@@ -270,6 +270,6 @@ if __name__ == '__main__':
         dominance_path = os.path.join('E:/datasets/DEAP_DE_Preprocessed_384/Dominance', file_name)
         # scio.savemat(arousal_path, arousal_data)
         # scio.savemat(valence_path, valence_data)
-        scio.savemat(dominance_path, dominance_data)
+        # scio.savemat(dominance_path, dominance_data)
 
 

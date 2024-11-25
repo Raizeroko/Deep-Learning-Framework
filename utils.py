@@ -27,14 +27,13 @@ def init_params(params):
         params['num_classes'] = 2               #DEAP是二分类:high, low
         params['subjects'] = 32
         params['trial'] = 40
-
     elif params['dataset'] == 'DREAMER':
         params['num_electrodes'] = 14
         params['num_classes'] = 2
         params['subjects'] = 23
         params['trial'] = 18
 
-    elif params['dataset'] == 'SEED' or 'SEEDIV':
+    elif params['dataset'] == 'SEED' or params['dataset'] == 'SEEDIV':
         params['num_electrodes'] = 62           #SEED有62给电极通道
         params['subjects'] = 15
         params['trial'] = 15
@@ -42,6 +41,12 @@ def init_params(params):
             params['num_classes'] = 3           #SEED是三分类:positive, negative, neutral
         elif params['dataset'] == 'SEEDIV':
             params['num_classes'] = 4           #SEEDIV是三分类:sad, fear, happy, neutral
+    elif params['dataset'] == 'CEED':
+        params['num_electrodes'] = 63
+        params['num_classes'] = 3
+        params['subjects'] = 1
+        params['trial'] = 15
+
     params['data_dir'] = os.path.join(path, data)
     return params
 

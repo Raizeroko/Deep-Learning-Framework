@@ -63,9 +63,9 @@ def preprocessed_DREAMER():
         arousal_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Arousal/', file_name)
         valence_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Valence/', file_name)
         dominance_path = os.path.join(f'E:/datasets/DREAMER_Time_Preprocessed_384/Dominance/', file_name)
-        scio.savemat(arousal_path, save_data_arousal)
-        scio.savemat(valence_path, save_data_valence)
-        scio.savemat(dominance_path, save_data_dominance)
+        # scio.savemat(arousal_path, save_data_arousal)
+        # scio.savemat(valence_path, save_data_valence)
+        # scio.savemat(dominance_path, save_data_dominance)
 
     print(data)
 
